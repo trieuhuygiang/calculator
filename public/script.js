@@ -1,5 +1,6 @@
 /* script.js
    Calculator with theme presets, glass mode, and 5 persistent backgrounds.
+   Updated: adds click animation class and background folder/basename support.
 */
 
 /* =========================
@@ -179,15 +180,21 @@ function handleButtonPress(target) {
   }
 }
 
-/* Click handlers */
+/* Click handlers: add temporary 'clicked' class for visual press feedback */
 buttons.forEach(btn => {
   btn.addEventListener('click', (e) => {
+    // add visual click class
+    btn.classList.add('clicked');
+    // remove after short delay so CSS transition can show
+    setTimeout(() => btn.classList.remove('clicked'), 120);
+
     handleButtonPress(e.currentTarget);
   });
 });
 
 /* Keyboard support */
 window.addEventListener('keydown', (e) => {
+  // numbers & decimal
   if ((e.key >= '0' && e.key <= '9') || e.key === '.') {
     e.preventDefault();
     inputDigit(e.key);
@@ -296,19 +303,24 @@ window.toggleTransparentButtons = toggleTransparentButtons;
 applySavedSettings();
 
 /* =========================
-   Background Image Switcher
+   Background Image Switcher (folder: /background/1.jpg ... 5.jpg)
    ========================= */
 const BG_KEY = "calculator_background";
 const bgSelect = document.getElementById("bgSelect");
 
-/* default images — filenames relative to this HTML file.
-   Replace these names if your images use different filenames.
-*/
-const defaultBg = "bg1.jpg";
+/* default image — updated to folder path */
+const defaultBg = "/background/1.jpg";
 
 function setBackground(img) {
-  // set CSS background-image on body (will transition)
-  document.body.style.backgroundImage = `url('${img}')`;
+  if (!img || img === "none") {
+    document.body.style.backgroundImage = '';
+  } else {
+    document.body.style.backgroundImage = `url('${img}')`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center center';
+    document.body.style.backgroundRepeat = 'no-repeat';
+    document.body.style.backgroundAttachment = 'fixed';
+  }
   localStorage.setItem(BG_KEY, img);
 }
 
