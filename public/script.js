@@ -1,9 +1,5 @@
 /* script.js
-   Functional calculator + simple theme & transparent button toggles
-   - Calculator: basic ops, AC, +/- (negate), %, decimal, equals
-   - Keyboard support
-   - Theme selection (data-theme on <html>) persisted to localStorage
-   - Toggle all-buttons glass mode (.transparent-buttons on body) persisted
+   Calculator with theme presets, glass mode, and 5 persistent backgrounds.
 */
 
 /* =========================
@@ -236,7 +232,6 @@ updateDisplay();
 /* =========================
    Theme & glass toggle logic
    ========================= */
-
 const THEME_KEY = 'calculator_theme';
 const GLASS_KEY = 'calculator_glass_mode';
 const themeSelect = document.getElementById('themeSelect');
@@ -281,15 +276,12 @@ function toggleTransparentButtons(enable) {
   return newState;
 }
 
-/* UI wiring */
 if (themeSelect) {
   themeSelect.addEventListener('change', (e) => {
     setTheme(e.target.value);
-    // optional: enable glass automatically in glass theme
     if (e.target.value === 'glass') toggleTransparentButtons(true);
   });
 }
-
 if (glassToggleBtn) {
   glassToggleBtn.addEventListener('click', () => {
     toggleTransparentButtons();
@@ -302,3 +294,35 @@ window.toggleTransparentButtons = toggleTransparentButtons;
 
 /* Apply on load */
 applySavedSettings();
+
+/* =========================
+   Background Image Switcher
+   ========================= */
+const BG_KEY = "calculator_background";
+const bgSelect = document.getElementById("bgSelect");
+
+/* default images — filenames relative to this HTML file.
+   Replace these names if your images use different filenames.
+*/
+const defaultBg = "bg1.jpg";
+
+function setBackground(img) {
+  // set CSS background-image on body (will transition)
+  document.body.style.backgroundImage = `url('${img}')`;
+  localStorage.setItem(BG_KEY, img);
+}
+
+function loadBackground() {
+  const savedBG = localStorage.getItem(BG_KEY) || defaultBg;
+  setBackground(savedBG);
+  if (bgSelect) bgSelect.value = savedBG;
+}
+
+if (bgSelect) {
+  bgSelect.addEventListener("change", (e) => {
+    setBackground(e.target.value);
+  });
+}
+
+/* Initialize background on startup */
+loadBackground();

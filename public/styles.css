@@ -1,11 +1,10 @@
 /* styles.css
-   Dark theme calculator with responsive grid
-   Transparent/glass-ready buttons and theme hooks
+   Full calculator with theme presets, glass buttons, and switchable backgrounds.
 */
 
-/* ------------------------
-   Theme variables (defaults)
-   ------------------------ */
+/* ---------------
+   Theme variables
+   --------------- */
 :root{
   --bg:#0b0b0c;
   --panel:#0f1012;
@@ -16,14 +15,12 @@
   --util:#6b6f73;
   --num:#2f3134;
 
-  /* button-specific variables (theme-ready) */
   --btn-num-bg: var(--num);
   --btn-util-bg: var(--util);
   --btn-op-bg: var(--orange);
   --btn-text: var(--text);
   --btn-border: rgba(255,255,255,0.08);
 
-  /* glass/frosted settings */
   --glass-border: rgba(255,255,255,0.12);
   --glass-bg-blend: rgba(255,255,255,0.02);
   --glass-blur: 6px;
@@ -52,7 +49,7 @@
   --glass-border: rgba(0,0,0,0.06);
 }
 
-/* Glass theme override (prefers translucent) */
+/* Glass theme override */
 [data-theme="glass"] {
   --bg: linear-gradient(180deg, rgba(10,10,12,0.9), rgba(14,14,16,0.9));
   --panel: rgba(255,255,255,0.02);
@@ -73,9 +70,9 @@
   --glass-border: rgba(255,255,255,0.12);
 }
 
-/* ------------------------
-   Base layout
-   ------------------------ */
+/* ---------------
+   Layout & base
+   --------------- */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -88,15 +85,38 @@ body{
   padding:24px;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+  transition: background-image 0.6s ease-in-out, background-color 0.3s ease;
 }
 
-/* page container */
+/* overlay to darken bg for readability; placed above background but behind content */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 0;
+  pointer-events: none;
+  transition: background 0.3s ease;
+}
+
+/* page content sits above overlay */
 .page{
+  position: relative;
+  z-index: 1;
   width:100%;
   max-width:420px;
   display:flex;
   flex-direction:column;
   gap:16px;
+}
+
+/* visually-hidden helper */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
 }
 
 /* header */
@@ -106,6 +126,7 @@ body{
   gap:12px;
   justify-content:space-between;
 }
+.left { display:flex; align-items:center; gap:12px; }
 .back-link{
   color:var(--muted);
   text-decoration:none;
@@ -116,7 +137,7 @@ body{
   margin:0;
   color:var(--text);
 }
-.theme-controls{
+.controls{
   display:flex;
   gap:8px;
   align-items:center;
@@ -168,7 +189,7 @@ body{
   box-shadow: 0 4px 0 rgba(0,0,0,0.6);
 }
 
-/* button colors use variables so themes can override */
+/* button colors use variables */
 .num{ background: var(--btn-num-bg); color: var(--btn-text); border: 1px solid rgba(0,0,0,0.06); }
 .util{ background: var(--btn-util-bg); color: var(--btn-text); border: 1px solid rgba(0,0,0,0.06); }
 .op{ background: var(--btn-op-bg); color: var(--btn-text); border: 1px solid rgba(0,0,0,0.06); }
@@ -214,10 +235,8 @@ body{
 }
 
 /* ------------------------
-   Transparent / glass button helpers
+   Transparent / glass helpers
    ------------------------ */
-
-/* .btn.transparent => individual button transparent style */
 .btn.transparent {
   background: transparent;
   color: var(--btn-text);
@@ -227,14 +246,10 @@ body{
   background-image: linear-gradient(180deg, transparent, var(--glass-bg-blend));
   box-shadow: 0 6px 20px rgba(0,0,0,0.45), inset 0 -1px 0 rgba(255,255,255,0.02);
 }
-
-/* slightly stronger border for operator when transparent */
 .btn.transparent.op {
   border-color: var(--glass-border);
   font-weight: 700;
 }
-
-/* body-level toggle: when .transparent-buttons present, all buttons get glass style */
 .transparent-buttons .btn {
   background: transparent !important;
   border: 1px solid var(--btn-border) !important;
@@ -243,19 +258,13 @@ body{
   -webkit-backdrop-filter: blur(var(--glass-blur));
   box-shadow: 0 6px 20px rgba(0,0,0,0.45), inset 0 -1px 0 rgba(255,255,255,0.02);
 }
-
-/* tweak zero padding when transparent global */
 .transparent-buttons .zero {
   padding-left: 28px;
 }
-
-/* display contrast tweak in transparent mode */
 .transparent-buttons .display {
   background: rgba(255,255,255,0.02);
   box-shadow: 0 8px 30px rgba(0,0,0,0.65);
 }
-
-/* fallback for browsers without backdrop-filter */
 @supports not ((-webkit-backdrop-filter: blur(6px)) or (backdrop-filter: blur(6px))) {
   .btn.transparent, .transparent-buttons .btn {
     background-image: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.12));
