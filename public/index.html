@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Calculator — Portfolio</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <main class="page">
+        <header class="topbar">
+            <a class="back-link" href="../index.html" aria-label="Back to portfolio">← Back</a>
+            <h1 class="title">Calculator</h1>
+
+            <!-- Theme controls -->
+            <div class="theme-controls" role="toolbar" aria-label="Theme controls">
+                <select id="themeSelect" aria-label="Choose theme">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                    <option value="glass">Glass</option>
+                </select>
+                <button id="glassToggle" class="btn util" type="button" aria-pressed="false"
+                    title="Toggle glass buttons">
+                    Toggle Glass
+                </button>
+            </div>
+        </header>
+
+        <section class="calculator" aria-label="Calculator">
+            <div class="display" id="display" aria-live="polite" role="textbox">0</div>
+
+            <div class="pad" role="application" aria-label="Calculator buttons">
+                <!-- Utility row -->
+                <button class="btn util" data-action="clear">AC</button>
+                <button class="btn util" data-action="negate">+/-</button>
+                <button class="btn util" data-action="percent">%</button>
+                <button class="btn op" data-action="operator" data-op="÷">÷</button>
+
+                <!-- Row 2 -->
+                <button class="btn num" data-value="7">7</button>
+                <button class="btn num" data-value="8">8</button>
+                <button class="btn num" data-value="9">9</button>
+                <button class="btn op" data-action="operator" data-op="×">×</button>
+
+                <!-- Row 3 -->
+                <button class="btn num" data-value="4">4</button>
+                <button class="btn num" data-value="5">5</button>
+                <button class="btn num" data-value="6">6</button>
+                <button class="btn op" data-action="operator" data-op="-">−</button>
+
+                <!-- Row 4 -->
+                <button class="btn num" data-value="1">1</button>
+                <button class="btn num" data-value="2">2</button>
+                <button class="btn num" data-value="3">3</button>
+                <button class="btn op" data-action="operator" data-op="+">+</button>
+
+                <!-- Row 5: wide zero -->
+                <button class="btn num zero" data-value="0">0</button>
+                <button class="btn num" data-value=".">.</button>
+                <button class="btn op equals" data-action="equals">=</button>
+            </div>
+        </section>
+
+        <footer class="notes">
+            <p>Keyboard: numbers, + - * /, Enter =, Backspace delete, Esc = AC</p>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

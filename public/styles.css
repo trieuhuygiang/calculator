@@ -1,0 +1,263 @@
+/* styles.css
+   Dark theme calculator with responsive grid
+   Transparent/glass-ready buttons and theme hooks
+*/
+
+/* ------------------------
+   Theme variables (defaults)
+   ------------------------ */
+:root{
+  --bg:#0b0b0c;
+  --panel:#0f1012;
+  --display-bg:#0b0b0d;
+  --text:#f5f5f7;
+  --muted:#bfc3c7;
+  --orange:#ff9500;
+  --util:#6b6f73;
+  --num:#2f3134;
+
+  /* button-specific variables (theme-ready) */
+  --btn-num-bg: var(--num);
+  --btn-util-bg: var(--util);
+  --btn-op-bg: var(--orange);
+  --btn-text: var(--text);
+  --btn-border: rgba(255,255,255,0.08);
+
+  /* glass/frosted settings */
+  --glass-border: rgba(255,255,255,0.12);
+  --glass-bg-blend: rgba(255,255,255,0.02);
+  --glass-blur: 6px;
+
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Light theme override */
+[data-theme="light"] {
+  --bg: #fafafa;
+  --panel: #ffffff;
+  --display-bg: #f3f4f6;
+  --text: #0b0b0b;
+  --muted: #6b7280;
+  --orange: #ff7a00;
+  --util: #d1d5db;
+  --num: #e6e7e9;
+
+  --btn-num-bg: var(--num);
+  --btn-util-bg: var(--util);
+  --btn-op-bg: var(--orange);
+  --btn-text: var(--text);
+  --btn-border: rgba(0,0,0,0.06);
+
+  --glass-bg-blend: rgba(0,0,0,0.03);
+  --glass-border: rgba(0,0,0,0.06);
+}
+
+/* Glass theme override (prefers translucent) */
+[data-theme="glass"] {
+  --bg: linear-gradient(180deg, rgba(10,10,12,0.9), rgba(14,14,16,0.9));
+  --panel: rgba(255,255,255,0.02);
+  --display-bg: rgba(255,255,255,0.02);
+  --text: #ffffff;
+  --muted: rgba(255,255,255,0.7);
+  --orange: rgba(255,149,0,0.95);
+  --util: rgba(255,255,255,0.04);
+  --num: rgba(255,255,255,0.02);
+
+  --btn-num-bg: rgba(255,255,255,0.02);
+  --btn-util-bg: rgba(255,255,255,0.02);
+  --btn-op-bg: rgba(255,149,0,0.08);
+  --btn-text: #ffffff;
+  --btn-border: rgba(255,255,255,0.12);
+
+  --glass-bg-blend: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.12);
+}
+
+/* ------------------------
+   Base layout
+   ------------------------ */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* page container */
+.page{
+  width:100%;
+  max-width:420px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+/* header */
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  justify-content:space-between;
+}
+.back-link{
+  color:var(--muted);
+  text-decoration:none;
+  font-size:14px;
+}
+.title{
+  font-size:20px;
+  margin:0;
+  color:var(--text);
+}
+.theme-controls{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+/* calculator container */
+.calculator{
+  background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.01));
+  padding:16px;
+  border-radius:16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+}
+
+/* display */
+.display{
+  height:88px;
+  border-radius:12px;
+  background:var(--display-bg);
+  display:flex;
+  align-items:flex-end;
+  justify-content:flex-end;
+  padding:18px;
+  font-size:36px;
+  font-weight:600;
+  color:var(--text);
+  margin-bottom:12px;
+  overflow:hidden;
+  word-break:break-all;
+}
+
+/* grid */
+.pad{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:10px;
+}
+
+/* button base */
+.btn{
+  user-select:none;
+  border:0;
+  padding:18px;
+  border-radius:12px;
+  font-size:20px;
+  font-weight:600;
+  min-height:56px;
+  cursor:pointer;
+  transition:transform 60ms ease, filter 100ms, background-color .18s, border-color .18s;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.6);
+}
+
+/* button colors use variables so themes can override */
+.num{ background: var(--btn-num-bg); color: var(--btn-text); border: 1px solid rgba(0,0,0,0.06); }
+.util{ background: var(--btn-util-bg); color: var(--btn-text); border: 1px solid rgba(0,0,0,0.06); }
+.op{ background: var(--btn-op-bg); color: var(--btn-text); border: 1px solid rgba(0,0,0,0.06); }
+
+/* wide zero */
+.zero{
+  grid-column: 1 / span 2;
+  text-align:left;
+  padding-left:36px;
+  border-radius:12px;
+}
+
+/* equals styling to stand out */
+.equals{
+  background: var(--btn-op-bg);
+}
+
+/* press states */
+.btn:active{
+  transform: translateY(2px);
+  box-shadow:none;
+  filter:brightness(.95);
+}
+
+/* focus outline for accessibility */
+.btn:focus{
+  outline: 3px solid rgba(255,255,255,0.06);
+  outline-offset: 2px;
+}
+
+/* responsiveness */
+@media (max-width:420px){
+  .display{height:76px; font-size:32px; padding:14px}
+  .btn{padding:14px; font-size:18px; min-height:48px}
+}
+
+/* footer note */
+.notes{
+  font-size:12px;
+  color:var(--muted);
+  text-align:center;
+  margin-top:6px;
+}
+
+/* ------------------------
+   Transparent / glass button helpers
+   ------------------------ */
+
+/* .btn.transparent => individual button transparent style */
+.btn.transparent {
+  background: transparent;
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background-image: linear-gradient(180deg, transparent, var(--glass-bg-blend));
+  box-shadow: 0 6px 20px rgba(0,0,0,0.45), inset 0 -1px 0 rgba(255,255,255,0.02);
+}
+
+/* slightly stronger border for operator when transparent */
+.btn.transparent.op {
+  border-color: var(--glass-border);
+  font-weight: 700;
+}
+
+/* body-level toggle: when .transparent-buttons present, all buttons get glass style */
+.transparent-buttons .btn {
+  background: transparent !important;
+  border: 1px solid var(--btn-border) !important;
+  background-image: linear-gradient(180deg, transparent, var(--glass-bg-blend)) !important;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 6px 20px rgba(0,0,0,0.45), inset 0 -1px 0 rgba(255,255,255,0.02);
+}
+
+/* tweak zero padding when transparent global */
+.transparent-buttons .zero {
+  padding-left: 28px;
+}
+
+/* display contrast tweak in transparent mode */
+.transparent-buttons .display {
+  background: rgba(255,255,255,0.02);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.65);
+}
+
+/* fallback for browsers without backdrop-filter */
+@supports not ((-webkit-backdrop-filter: blur(6px)) or (backdrop-filter: blur(6px))) {
+  .btn.transparent, .transparent-buttons .btn {
+    background-image: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.12));
+  }
+}
