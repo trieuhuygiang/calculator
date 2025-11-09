@@ -1,6 +1,6 @@
 /* script.js
    Calculator with theme presets, glass mode, and 5 persistent backgrounds.
-   Updated: adds click animation class and background folder/basename support.
+   Fixed: ensure glass is removed when switching back to dark/light and default background is 1.
 */
 
 /* =========================
@@ -237,7 +237,7 @@ window.addEventListener('keydown', (e) => {
 updateDisplay();
 
 /* =========================
-   Theme & glass toggle logic
+   Theme & glass toggle logic (FIXED)
    ========================= */
 const THEME_KEY = 'calculator_theme';
 const GLASS_KEY = 'calculator_glass_mode';
@@ -246,9 +246,11 @@ const glassToggleBtn = document.getElementById('glassToggle');
 
 function applySavedSettings() {
   const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+  // set visual theme
   setTheme(savedTheme);
   if (themeSelect) themeSelect.value = savedTheme;
 
+  // glass state
   const savedGlass = localStorage.getItem(GLASS_KEY);
   const glassOn = savedGlass === 'true';
   if (glassOn) document.body.classList.add('transparent-buttons');
@@ -283,15 +285,39 @@ function toggleTransparentButtons(enable) {
   return newState;
 }
 
+/* ===== FIX: ensure glass class is removed when switching away from 'glass' theme
+          and ensure glass is enabled when 'glass' is selected. Also update display. ===== */
 if (themeSelect) {
   themeSelect.addEventListener('change', (e) => {
-    setTheme(e.target.value);
-    if (e.target.value === 'glass') toggleTransparentButtons(true);
+    const chosen = e.target.value;
+    setTheme(chosen);
+
+    // If user chose glass, enable glass mode; otherwise explicitly disable it.
+    if (chosen === 'glass') {
+      toggleTransparentButtons(true);
+    } else {
+      // turn off glass overrides so dark/light show correctly
+      toggleTransparentButtons(false);
+    }
+
+    // refresh display colors/readability if needed
+    updateDisplay();
   });
 }
 if (glassToggleBtn) {
   glassToggleBtn.addEventListener('click', () => {
-    toggleTransparentButtons();
+    // toggle manual glass mode and keep theme selection in sync:
+    const newState = toggleTransparentButtons();
+    // If user toggles glass ON via button, also set themeSelect to 'glass' visually and data-theme
+    if (newState) {
+      setTheme('glass');
+      if (themeSelect) themeSelect.value = 'glass';
+    } else {
+      // If they turn it off, restore the currently saved theme or default to dark
+      const currentTheme = localStorage.getItem(THEME_KEY) || 'dark';
+      setTheme(currentTheme);
+      if (themeSelect) themeSelect.value = currentTheme;
+    }
   });
 }
 
@@ -308,8 +334,8 @@ applySavedSettings();
 const BG_KEY = "calculator_background";
 const bgSelect = document.getElementById("bgSelect");
 
-/* default image — updated to folder path */
-const defaultBg = "/background/1.jpg";
+/* default image — updated to match select option values (no leading slash) */
+const defaultBg = "background/1.jpg";
 
 function setBackground(img) {
   if (!img || img === "none") {
@@ -325,7 +351,12 @@ function setBackground(img) {
 }
 
 function loadBackground() {
-  const savedBG = localStorage.getItem(BG_KEY) || defaultBg;
+  // If nothing saved, force defaultBg and save it.
+  let savedBG = localStorage.getItem(BG_KEY);
+  if (!savedBG) {
+    savedBG = defaultBg;
+    localStorage.setItem(BG_KEY, defaultBg);
+  }
   setBackground(savedBG);
   if (bgSelect) bgSelect.value = savedBG;
 }
